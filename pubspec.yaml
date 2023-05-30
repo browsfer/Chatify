@@ -40,6 +40,9 @@ dependencies:
   motion_toast: ^2.6.8
   loading_animation_widget: ^1.2.0+4
   font_awesome_flutter: ^10.4.0
+  firebase_storage: ^11.2.1
+  image_picker: ^0.8.7+5
+  cloud_firestore: ^4.8.0
   
 
 dev_dependencies:
