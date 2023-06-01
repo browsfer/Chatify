@@ -27,9 +27,9 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final firebaseAuth = FirebaseAuth.instance;
-  final firebaseStorage = FirebaseStorage.instance;
-  final firebaseFirestore = FirebaseFirestore.instance;
+  final _auth = FirebaseAuth.instance;
+  final _storage = FirebaseStorage.instance;
+  final _firestore = FirebaseFirestore.instance;
   File? _selectedImage;
 
   Future submitForm() async {
@@ -56,41 +56,39 @@ class _AuthScreenState extends State<AuthScreen> {
       });
 
       if (isLogin) {
-        await firebaseAuth.signInWithEmailAndPassword(
+        await _auth.signInWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
       } else {
-        final userCredentials =
-            await firebaseAuth.createUserWithEmailAndPassword(
+        final userCredentials = await _auth.createUserWithEmailAndPassword(
           email: _emailController.text,
           password: _passwordController.text,
         );
 
-        //S T O R E   U S E R   D A T A
-        await firebaseFirestore
-            .collection('users')
-            .doc(userCredentials.user!.uid)
-            .set({
-          'username': _usernameController.text,
-          'email': _emailController.text,
-        });
-
         // U P L O A D   I M A G E
-        final ref = firebaseStorage
+        final ref = _storage
             .ref()
             .child('user_images')
             .child('${userCredentials.user!.uid}.jpg');
         await ref.putFile(_selectedImage!);
         final imageUrl = await ref.getDownloadURL();
 
-        print(imageUrl);
+        //S T O R E   U S E R   D A T A
+        await _firestore
+            .collection('users')
+            .doc(userCredentials.user!.uid)
+            .set({
+          'username': _usernameController.text,
+          'email': _emailController.text,
+          'image_url': imageUrl,
+        });
       }
     } on FirebaseAuthException catch (e) {
       MotionToast.error(
         description: Text(e.message!),
         title: const Text(
-          'Failed to Sign In',
+          'Failed to Authenticate',
         ),
         padding: const EdgeInsets.all(10),
       ).show(context);
@@ -140,7 +138,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 20),
-
+                        // U S E R  I M A G E
                         if (!isLogin) ...[
                           UserImagePicker(
                             onPickImage: (pickedImage) {
