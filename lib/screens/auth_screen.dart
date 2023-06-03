@@ -150,6 +150,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                           // U S E R N A M E
                           MyTextField(
+                            prefixIcon: const Icon(Icons.person),
                             labelText: 'Username',
                             validator: (val) {
                               if (val!.isEmpty || val.length < 4) {
@@ -163,6 +164,7 @@ class _AuthScreenState extends State<AuthScreen> {
                         ],
 
                         MyTextField(
+                          prefixIcon: const Icon(Icons.email),
                           labelText: 'Email',
                           textController: _emailController,
                           validator: (val) {
@@ -176,6 +178,7 @@ class _AuthScreenState extends State<AuthScreen> {
 
                         // P A S W O R D
                         MyTextField(
+                          prefixIcon: const Icon(Icons.lock),
                           labelText: 'Password',
                           textController: _passwordController,
                           obscureText: true,
@@ -192,6 +195,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                           // C O N F I R M  P A S S W O R D
                           MyTextField(
+                            prefixIcon: const Icon(Icons.lock_outline),
                             labelText: 'Confirm Password',
                             obscureText: true,
                             validator: (val) {
@@ -248,6 +252,10 @@ class _AuthScreenState extends State<AuthScreen> {
                                 ? 'Create new account'
                                 : 'Login instead'),
                           ),
+                        const SizedBox(height: 100),
+
+                        Text('Made with ❤️ by @browsfer',
+                            style: Theme.of(context).textTheme.headlineSmall),
                       ],
                     ),
                   ),

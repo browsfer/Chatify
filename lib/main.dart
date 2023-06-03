@@ -15,33 +15,51 @@ void main() async {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Chatify',
-      theme: ThemeData(
-        appBarTheme: AppBarTheme(
-          color: Colors.blueGrey[900],
-          titleTextStyle: TextStyle(
-            color: Colors.grey[300],
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.blueGrey,
-          background: Colors.grey[300],
-        ),
-        useMaterial3: true,
-        textTheme: TextTheme(
-          headlineSmall: TextStyle(
-            color: Colors.grey[700],
-            fontSize: 20,
-            fontWeight: FontWeight.w500,
-          ),
+    final ThemeData theme = ThemeData(
+      appBarTheme: const AppBarTheme(
+        backgroundColor: Color(0xFFC2BAA6),
+        actionsIconTheme: IconThemeData(color: Color(0xFF353535)),
+        elevation: 20,
+        titleTextStyle: TextStyle(
+          color: Color(0xFF353535),
+          fontSize: 20,
+          fontWeight: FontWeight.w500,
         ),
       ),
+      useMaterial3: true,
+      brightness: Brightness.light,
+      colorScheme: ColorScheme.fromSeed(
+        seedColor: const Color(0xFF8FBF9F),
+        background: const Color(0xFFEBE2CD),
+      ),
+    );
+    return MaterialApp(
+      title: 'Chatify',
+      theme: theme,
+      // theme: ThemeData(
+      //   appBarTheme: AppBarTheme(
+      //     backgroundColor: Colors.blueGrey,
+      //     titleTextStyle: TextStyle(
+      //       color: Colors.grey[300],
+      //       fontSize: 20,
+      //       fontWeight: FontWeight.w500,
+      //     ),
+      //   ),
+      //   colorScheme: ColorScheme.fromSeed(
+      //     seedColor: Colors.blueGrey,
+      //     background: Colors.grey[300],
+      //   ),
+      //   useMaterial3: true,
+      //   textTheme: TextTheme(
+      //     headlineSmall: TextStyle(
+      //       color: Colors.grey[700],
+      //       fontSize: 20,
+      //       fontWeight: FontWeight.w500,
+      //     ),
+      //   ),
+      // ),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {

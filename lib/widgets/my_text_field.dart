@@ -5,6 +5,8 @@ class MyTextField extends StatelessWidget {
   final bool? obscureText;
   final TextEditingController? textController;
   final String? Function(String?)? validator;
+  final Widget? prefixIcon;
+  final Color? prefixIconColor;
 
   const MyTextField({
     super.key,
@@ -12,6 +14,8 @@ class MyTextField extends StatelessWidget {
     this.obscureText,
     this.textController,
     this.validator,
+    this.prefixIcon,
+    this.prefixIconColor,
   });
 
   @override
@@ -21,6 +25,9 @@ class MyTextField extends StatelessWidget {
       controller: textController,
       obscureText: obscureText ?? false,
       decoration: InputDecoration(
+        prefixIcon: prefixIcon,
+        prefixIconColor:
+            prefixIconColor ?? Theme.of(context).colorScheme.primary,
         labelText: labelText,
         border: const OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -34,7 +41,7 @@ class MyTextField extends StatelessWidget {
           borderRadius: BorderRadius.all(Radius.circular(10)),
         ),
         filled: true,
-        fillColor: Colors.grey.shade200,
+        fillColor: Color(0xFFC2BAA6),
       ),
     );
   }
