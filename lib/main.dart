@@ -18,12 +18,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = ThemeData(
+      drawerTheme: const DrawerThemeData(
+        backgroundColor: Color(0xFFC2BAA6),
+        endShape: BeveledRectangleBorder(),
+      ),
       appBarTheme: const AppBarTheme(
         backgroundColor: Color(0xFFC2BAA6),
         actionsIconTheme: IconThemeData(color: Color(0xFF353535)),
         elevation: 20,
         titleTextStyle: TextStyle(
-          color: Color(0xFF353535),
+          color: Color(0xFF5F5F5F),
           fontSize: 20,
           fontWeight: FontWeight.w500,
         ),
