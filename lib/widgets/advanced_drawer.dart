@@ -1,3 +1,5 @@
+import 'package:chatify/screens/chat_screen.dart';
+import 'package:chatify/screens/user_settings_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -94,33 +96,23 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                       ),
                     ),
                   ),
-                  const Text(
-                    'Chat rooms',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
+                  ListTile(
+                    onTap: () => Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => ChatScreen()),
                     ),
-                  ),
-                  ListTile(
-                    onTap: () {},
                     leading: const Icon(Icons.home),
-                    title: const Text('General'),
+                    title: const Text('Home'),
                   ),
                   ListTile(
-                    onTap: () {},
-                    leading: const Icon(Icons.event_available),
-                    title: const Text('Incoming events'),
-                  ),
-                  ListTile(
-                    onTap: () {},
-                    leading: const Icon(Icons.favorite),
-                    title: const Text('Best places'),
-                  ),
-                  ListTile(
-                    onTap: () {},
-                    leading: const Icon(Icons.recommend_outlined),
-                    title: const Text('Recomendations'),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => UserSettingsScreen(),
+                      ),
+                    ),
+                    leading: const Icon(Icons.settings),
+                    title: const Text('Settings'),
                   ),
                   const Spacer(),
                   DefaultTextStyle(

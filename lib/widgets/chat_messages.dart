@@ -17,7 +17,6 @@ class _ChatMessagesState extends State<ChatMessages> {
     await fcm.setAutoInitEnabled(true);
     await fcm.requestPermission();
     final token = await fcm.getToken();
-    print(token);
 
     fcm.subscribeToTopic('chat');
   }
@@ -35,12 +34,15 @@ class _ChatMessagesState extends State<ChatMessages> {
     final authenticatedUser = FirebaseAuth.instance.currentUser!;
 
     return StreamBuilder(
-        stream: _firestore.collection('chat').snapshots(),
+        stream: _firestore
+            .collection('chat')
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
         builder: (ctx, chatSnapshot) {
           if (chatSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          final chatDocs = chatSnapshot.data!.docs;
+          final loadedMessages = chatSnapshot.data!.docs;
           return ListView.builder(
             padding: const EdgeInsets.only(
               bottom: 40,
@@ -48,11 +50,11 @@ class _ChatMessagesState extends State<ChatMessages> {
               right: 13,
             ),
             reverse: true,
-            itemCount: chatDocs.length,
+            itemCount: loadedMessages.length,
             itemBuilder: (ctx, index) {
-              final chatMessage = chatDocs[index].data();
-              final nextMessage = index + 1 < chatDocs.length
-                  ? chatDocs[index + 1].data()
+              final chatMessage = loadedMessages[index].data();
+              final nextMessage = index + 1 < loadedMessages.length
+                  ? loadedMessages[index + 1].data()
                   : null;
               final currentMessageUserId = chatMessage['userId'];
               final nextMessageUserId =
