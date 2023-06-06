@@ -21,9 +21,33 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
   final _newUsernameController = TextEditingController();
 
-  final newContext = BuildContext;
+  final _oldPasswordController = TextEditingController();
 
-  Future<void> _updateUserData() async {
+  final _newPasswordController = TextEditingController();
+
+  Future<void> _changePassword() async {
+    final user = FirebaseAuth.instance.currentUser!;
+
+    try {
+      await user.updatePassword(_newPasswordController.text);
+      Navigator.of(context).pop();
+      MotionToast.success(
+        description: const Text('Password changed successfully'),
+      ).show(context);
+      _oldPasswordController.clear();
+      _newPasswordController.clear();
+    } on FirebaseAuthException catch (e) {
+      MotionToast.error(
+        description: Text(e.message!),
+        title: const Text(
+          'Failed to change your password.',
+        ),
+        padding: const EdgeInsets.all(10),
+      ).show(context);
+    }
+  }
+
+  Future<void> _changeUsername() async {
     try {
       await _firebase.collection('users').doc(_currentUser!.uid).update(
         {
@@ -39,7 +63,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
       MotionToast.error(
         description: Text(e.message!),
         title: const Text(
-          'Failed to change your data.',
+          'Failed to change your username.',
         ),
         padding: const EdgeInsets.all(10),
       ).show(context);
@@ -54,7 +78,7 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void showChangeData() {
+    void showChangeData({required bool isChangingPassword}) {
       showDialog(
         context: context,
         builder: (context) => Dialog(
@@ -66,24 +90,57 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
-                  'Type your new username here:',
-                  style: TextStyle(
+                Text(
+                  isChangingPassword
+                      ? 'Type your new password:'
+                      : 'Type your new username:',
+                  style: const TextStyle(
                     fontSize: 16,
                   ),
                 ),
                 const SizedBox(height: 10),
-                MyTextField(
-                  textController: _newUsernameController,
-                  labelText: 'New username',
-                ),
+                if (!isChangingPassword)
+                  MyTextField(
+                    textController: _newUsernameController,
+                    labelText: 'New username',
+                  ),
+                if (isChangingPassword) ...[
+                  MyTextField(
+                    labelText: 'Old password',
+                    textController: _oldPasswordController,
+                    obscureText: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (val) {
+                      if (val!.isEmpty || val.length < 7) {
+                        return 'Password must be at least 7 characters long';
+                      }
+                      return null;
+                    },
+                  ),
+                  MyTextField(
+                    labelText: 'New password',
+                    textController: _newPasswordController,
+                    obscureText: true,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    validator: (value) {
+                      if (value!.isEmpty) {
+                        return 'Please enter your new password';
+                      } else if (value == _oldPasswordController.text) {
+                        return 'Passwords are same';
+                      }
+                      return null;
+                    },
+                  ),
+                ],
                 const SizedBox(height: 10),
                 CustomButton(
                   textColor: Colors.white,
                   text: 'Submit',
                   color: Theme.of(context).primaryColor,
                   radius: 10,
-                  onPressed: null,
+                  onPressed: () => isChangingPassword
+                      ? _changePassword()
+                      : _changeUsername(),
                 ),
               ],
             ),
@@ -103,12 +160,12 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
           ListTile(
             leading: const Icon(Icons.person),
             title: const Text('Change username'),
-            onTap: showChangeData,
+            onTap: () => showChangeData(isChangingPassword: false),
           ),
           ListTile(
             leading: const Icon(Icons.lock),
             title: const Text('Change password'),
-            onTap: showChangeData,
+            onTap: () => showChangeData(isChangingPassword: true),
           ),
         ],
       ),

@@ -5,6 +5,7 @@ class MyTextField extends StatelessWidget {
   final bool? obscureText;
   final TextEditingController? textController;
   final String? Function(String?)? validator;
+  final AutovalidateMode? autovalidateMode;
   final Widget? prefixIcon;
   final Color? prefixIconColor;
 
@@ -16,11 +17,13 @@ class MyTextField extends StatelessWidget {
     this.validator,
     this.prefixIcon,
     this.prefixIconColor,
+    this.autovalidateMode,
   });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+      autovalidateMode: autovalidateMode,
       validator: validator,
       controller: textController,
       obscureText: obscureText ?? false,
