@@ -1,10 +1,10 @@
-import 'package:chatify/screens/chat_screen.dart';
 import 'package:chatify/screens/user_settings_screen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 
+import '../chat/chat_screen.dart';
 import 'loading_widget.dart';
 
 class MyAdvancedDrawer extends StatefulWidget {
@@ -51,15 +51,21 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
               .collection('users')
               .doc(user!.uid)
               .snapshots(),
-          builder: (context, userSnapshot) {
-            final userData = userSnapshot.data?.data();
-
-            if (userSnapshot.connectionState == ConnectionState.waiting &&
-                userData == null) {
+          builder: (context, userSnapshots) {
+            if (userSnapshots.connectionState == ConnectionState.waiting) {
               return const Center(
                 child: LoadingWidget(),
               );
             }
+
+            if (userSnapshots.hasError) {
+              return Center(
+                // Better error handling later
+                child: Text('Something went wrong!:('),
+              );
+            }
+
+            final userData = userSnapshots.data?.data();
 
             return SafeArea(
               child: ListTileTheme(
@@ -70,7 +76,7 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                   children: [
                     const SizedBox(height: 25),
                     Text(
-                      userData!['username'],
+                      userData?['username'] ?? '',
                       style: const TextStyle(
                         color: Colors.white,
                         fontSize: 20,
@@ -96,9 +102,8 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                         shape: BoxShape.circle,
                       ),
                       child: CircleAvatar(
-                        backgroundImage: NetworkImage(
-                          userData['image_url'],
-                        ),
+                        backgroundImage:
+                            NetworkImage(userData?['image_url'] ?? ''),
                       ),
                     ),
                     ListTile(

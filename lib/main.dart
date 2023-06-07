@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'screens/chat_screen.dart';
+import 'chat/chat_screen.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -42,28 +42,6 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Chatify',
       theme: theme,
-      // theme: ThemeData(
-      //   appBarTheme: AppBarTheme(
-      //     backgroundColor: Colors.blueGrey,
-      //     titleTextStyle: TextStyle(
-      //       color: Colors.grey[300],
-      //       fontSize: 20,
-      //       fontWeight: FontWeight.w500,
-      //     ),
-      //   ),
-      //   colorScheme: ColorScheme.fromSeed(
-      //     seedColor: Colors.blueGrey,
-      //     background: Colors.grey[300],
-      //   ),
-      //   useMaterial3: true,
-      //   textTheme: TextTheme(
-      //     headlineSmall: TextStyle(
-      //       color: Colors.grey[700],
-      //       fontSize: 20,
-      //       fontWeight: FontWeight.w500,
-      //     ),
-      //   ),
-      // ),
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {

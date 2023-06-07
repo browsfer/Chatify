@@ -30,7 +30,7 @@ class FirebaseService {
       final imageUrl = await ref.getDownloadURL();
 
       //S T O R E   U S E R   D A T A
-      await _firestore.collection('users').doc(userCredentials.user!.uid).set({
+      _firestore.collection('users').doc(userCredentials.user!.uid).set({
         'username': username,
         'email': email,
         'image_url': imageUrl,

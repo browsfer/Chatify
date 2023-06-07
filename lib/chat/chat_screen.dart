@@ -1,13 +1,13 @@
 import 'package:chatify/widgets/advanced_drawer.dart';
-import 'package:chatify/widgets/chat_messages.dart';
-import 'package:chatify/widgets/new_message.dart';
+import 'package:chatify/chat/chat_messages.dart';
+import 'package:chatify/chat/new_message.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen({super.key});
+  const ChatScreen({super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -18,22 +18,22 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _advancedDrawerController = AdvancedDrawerController();
+    final advancedDrawerController = AdvancedDrawerController();
 
-    void _handleMenuButtonPressed() {
+    void handleMenuButtonPressed() {
       // NOTICE: Manage Advanced Drawer state through the Controller.
       // _advancedDrawerController.value = AdvancedDrawerValue.visible();
-      _advancedDrawerController.showDrawer();
+      advancedDrawerController.showDrawer();
     }
 
     return MyAdvancedDrawer(
-      controller: _advancedDrawerController,
+      controller: advancedDrawerController,
       child: Scaffold(
         appBar: AppBar(
           leading: IconButton(
-            onPressed: _handleMenuButtonPressed,
+            onPressed: handleMenuButtonPressed,
             icon: ValueListenableBuilder<AdvancedDrawerValue>(
-              valueListenable: _advancedDrawerController,
+              valueListenable: advancedDrawerController,
               builder: (_, value, __) {
                 return AnimatedSwitcher(
                   duration: const Duration(milliseconds: 250),
