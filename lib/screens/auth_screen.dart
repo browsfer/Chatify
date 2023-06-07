@@ -1,10 +1,9 @@
 import 'dart:io';
 
+import 'package:chatify/services/firebase_service.dart';
 import 'package:chatify/widgets/custom_button.dart';
 import 'package:chatify/widgets/user_image_picker.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -27,9 +26,8 @@ class _AuthScreenState extends State<AuthScreen> {
   final _passwordController = TextEditingController();
   final _usernameController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
-  final _auth = FirebaseAuth.instance;
-  final _storage = FirebaseStorage.instance;
-  final _firestore = FirebaseFirestore.instance;
+  final _authService = FirebaseService();
+
   File? _selectedImage;
 
   Future submitForm() async {
@@ -56,33 +54,17 @@ class _AuthScreenState extends State<AuthScreen> {
       });
 
       if (isLogin) {
-        await _auth.signInWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
+        await _authService.loginUser(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
         );
       } else {
-        final userCredentials = await _auth.createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
+        await _authService.createAccount(
+          email: _emailController.text.trim(),
+          password: _passwordController.text.trim(),
+          username: _usernameController.text,
+          selectedImage: _selectedImage!,
         );
-
-        // U P L O A D   I M A G E
-        final ref = _storage
-            .ref()
-            .child('user_images')
-            .child('${userCredentials.user!.uid}.jpg');
-        await ref.putFile(_selectedImage!);
-        final imageUrl = await ref.getDownloadURL();
-
-        //S T O R E   U S E R   D A T A
-        await _firestore
-            .collection('users')
-            .doc(userCredentials.user!.uid)
-            .set({
-          'username': _usernameController.text,
-          'email': _emailController.text,
-          'image_url': imageUrl,
-        });
       }
     } on FirebaseAuthException catch (e) {
       MotionToast.error(
@@ -103,6 +85,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _usernameController.dispose();
 
     super.dispose();
   }

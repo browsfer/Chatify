@@ -1,8 +1,8 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:chatify/services/firebase_service.dart';
 import 'package:chatify/widgets/custom_button.dart';
 import 'package:chatify/widgets/my_text_field.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
@@ -15,9 +15,7 @@ class UserSettingsScreen extends StatefulWidget {
 }
 
 class _UserSettingsScreenState extends State<UserSettingsScreen> {
-  final _firebase = FirebaseFirestore.instance;
-
-  final _currentUser = FirebaseAuth.instance.currentUser;
+  final _firebaseService = FirebaseService();
 
   final _newUsernameController = TextEditingController();
 
@@ -26,10 +24,9 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
   final _newPasswordController = TextEditingController();
 
   Future<void> _changePassword() async {
-    final user = FirebaseAuth.instance.currentUser!;
-
     try {
-      await user.updatePassword(_newPasswordController.text);
+      await _firebaseService.changeUserPassword(
+          newPassword: _newPasswordController.text);
       Navigator.of(context).pop();
       MotionToast.success(
         description: const Text('Password changed successfully'),
@@ -49,10 +46,8 @@ class _UserSettingsScreenState extends State<UserSettingsScreen> {
 
   Future<void> _changeUsername() async {
     try {
-      await _firebase.collection('users').doc(_currentUser!.uid).update(
-        {
-          'username': _newUsernameController.text.trim(),
-        },
+      await _firebaseService.changeUsername(
+        username: _newUsernameController.text.trim(),
       );
       Navigator.of(context).pop();
       MotionToast.success(
