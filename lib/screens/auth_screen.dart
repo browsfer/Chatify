@@ -7,9 +7,9 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:motion_toast/motion_toast.dart';
 
+import '../widgets/loading_widget.dart';
 import '../widgets/my_text_field.dart';
 
 class AuthScreen extends StatefulWidget {
@@ -212,12 +212,7 @@ class _AuthScreenState extends State<AuthScreen> {
                           height: 10,
                         ),
                         // L O G I N  B U T T O N
-                        if (_isLoading)
-                          LoadingAnimationWidget.flickr(
-                            leftDotColor: Theme.of(context).colorScheme.primary,
-                            rightDotColor: Colors.teal,
-                            size: 45,
-                          ),
+                        if (_isLoading) const LoadingWidget(),
                         if (!_isLoading)
                           CustomButton(
                             radius: 10,

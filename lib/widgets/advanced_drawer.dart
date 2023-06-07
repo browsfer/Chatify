@@ -4,6 +4,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
+import 'package:loading_animation_widget/loading_animation_widget.dart';
+
+import 'loading_widget.dart';
 
 class MyAdvancedDrawer extends StatefulWidget {
   final Widget child;
@@ -16,10 +19,10 @@ class MyAdvancedDrawer extends StatefulWidget {
 }
 
 class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
+  final user = FirebaseAuth.instance.currentUser;
+
   @override
   Widget build(BuildContext context) {
-    final user = FirebaseAuth.instance.currentUser;
-
     return AdvancedDrawer(
       backdrop: Container(
         width: double.infinity,
@@ -45,94 +48,96 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
         borderRadius: BorderRadius.all(Radius.circular(16)),
       ),
       drawer: StreamBuilder(
-        stream: FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .snapshots(),
-        builder: (context, userSnapshot) {
-          final userData = userSnapshot.data?.data();
+          stream: FirebaseFirestore.instance
+              .collection('users')
+              .doc(user!.uid)
+              .snapshots(),
+          builder: (context, userSnapshot) {
+            final userData = userSnapshot.data?.data();
 
-          if (userSnapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+            if (userSnapshot.connectionState == ConnectionState.waiting &&
+                userData == null) {
+              return const Center(
+                child: LoadingWidget(),
+              );
+            }
 
-          return SafeArea(
-            child: ListTileTheme(
-              textColor: Colors.white,
-              iconColor: Colors.white,
-              child: Column(
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  const SizedBox(height: 25),
-                  Text(
-                    userData!['username'],
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                    ),
-                  ),
-                  Text(
-                    user.email!,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13,
-                    ),
-                  ),
-                  Container(
-                    width: 128.0,
-                    height: 128.0,
-                    margin: const EdgeInsets.only(
-                      top: 24.0,
-                      bottom: 64.0,
-                    ),
-                    clipBehavior: Clip.antiAlias,
-                    decoration: const BoxDecoration(
-                      color: Colors.black26,
-                      shape: BoxShape.circle,
-                    ),
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(
-                        userData['image_url'],
+            return SafeArea(
+              child: ListTileTheme(
+                textColor: Colors.white,
+                iconColor: Colors.white,
+                child: Column(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    const SizedBox(height: 25),
+                    Text(
+                      userData!['username'],
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
                       ),
                     ),
-                  ),
-                  ListTile(
-                    onTap: () => Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => ChatScreen()),
-                    ),
-                    leading: const Icon(Icons.home),
-                    title: const Text('Home'),
-                  ),
-                  ListTile(
-                    onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => UserSettingsScreen(),
+                    Text(
+                      user!.email!,
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 13,
                       ),
                     ),
-                    leading: const Icon(Icons.settings),
-                    title: const Text('Settings'),
-                  ),
-                  const Spacer(),
-                  DefaultTextStyle(
-                    style: const TextStyle(
-                      fontSize: 12,
-                      color: Colors.white54,
-                    ),
-                    child: Container(
-                      margin: const EdgeInsets.symmetric(
-                        vertical: 16.0,
+                    Container(
+                      width: 128.0,
+                      height: 128.0,
+                      margin: const EdgeInsets.only(
+                        top: 24.0,
+                        bottom: 64.0,
                       ),
-                      child: const Text('Terms of Service | Privacy Policy'),
+                      clipBehavior: Clip.antiAlias,
+                      decoration: const BoxDecoration(
+                        color: Colors.black26,
+                        shape: BoxShape.circle,
+                      ),
+                      child: CircleAvatar(
+                        backgroundImage: NetworkImage(
+                          userData['image_url'],
+                        ),
+                      ),
                     ),
-                  ),
-                ],
+                    ListTile(
+                      onTap: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => ChatScreen()),
+                      ),
+                      leading: const Icon(Icons.home),
+                      title: const Text('Home'),
+                    ),
+                    ListTile(
+                      onTap: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => UserSettingsScreen(),
+                        ),
+                      ),
+                      leading: const Icon(Icons.settings),
+                      title: const Text('Settings'),
+                    ),
+                    const Spacer(),
+                    DefaultTextStyle(
+                      style: const TextStyle(
+                        fontSize: 12,
+                        color: Colors.white54,
+                      ),
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(
+                          vertical: 16.0,
+                        ),
+                        child: const Text('Terms of Service | Privacy Policy'),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          }),
       child: widget.child,
     );
   }
