@@ -57,10 +57,10 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
-        body: Column(
+        body: const Column(
           children: [
             Expanded(child: ChatMessages()),
-            const NewChatMessage(),
+            NewChatMessage(),
           ],
         ),
       ),

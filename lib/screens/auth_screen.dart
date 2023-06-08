@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:chatify/screens/password_reset_screen.dart';
 import 'package:chatify/services/firebase_service.dart';
 import 'package:chatify/widgets/custom_button.dart';
 import 'package:chatify/widgets/user_image_picker.dart';
@@ -19,7 +20,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-  bool isLogin = true;
+  bool _isLogin = true;
   bool _isLoading = false;
 
   final _emailController = TextEditingController();
@@ -36,7 +37,7 @@ class _AuthScreenState extends State<AuthScreen> {
     if (!isValid) {
       return;
     }
-    if (!isLogin && _selectedImage == null) {
+    if (!_isLogin && _selectedImage == null) {
       MotionToast.warning(
         description: const Text('Please pick an image'),
         title: const Text(
@@ -53,7 +54,7 @@ class _AuthScreenState extends State<AuthScreen> {
         _isLoading = true;
       });
 
-      if (isLogin) {
+      if (_isLogin) {
         await _authService.loginUser(
           email: _emailController.text.trim(),
           password: _passwordController.text.trim(),
@@ -117,12 +118,14 @@ class _AuthScreenState extends State<AuthScreen> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
-                          isLogin ? 'Login to continue' : 'Create your account',
+                          _isLogin
+                              ? 'Login to continue'
+                              : 'Create your account',
                           style: Theme.of(context).textTheme.headlineSmall,
                         ),
                         const SizedBox(height: 20),
                         // U S E R  I M A G E
-                        if (!isLogin) ...[
+                        if (!_isLogin) ...[
                           UserImagePicker(
                             onPickImage: (pickedImage) {
                               setState(() {
@@ -172,7 +175,28 @@ class _AuthScreenState extends State<AuthScreen> {
                             return null;
                           },
                         ),
-                        if (!isLogin) ...[
+                        // R E S E T    U S E R   P A S S W O R D
+                        if (_isLogin)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            children: [
+                              GestureDetector(
+                                onTap: () {
+                                  Navigator.push(context,
+                                      MaterialPageRoute(builder: (context) {
+                                    return PasswordResetScreen();
+                                  }));
+                                },
+                                child: Text(
+                                  'Forgot password?',
+                                  style: TextStyle(
+                                    color: Theme.of(context).colorScheme.error,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        if (!_isLogin) ...[
                           const SizedBox(
                             height: 10,
                           ),
@@ -207,7 +231,7 @@ class _AuthScreenState extends State<AuthScreen> {
                             textColor: Colors.white,
                             isLoading: _isLoading,
                             child: Text(
-                              isLogin ? 'Login' : 'Create account',
+                              _isLogin ? 'Login' : 'Create account',
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 17,
@@ -218,15 +242,15 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(
                           height: 20,
                         ),
-                        // C R E A T E  N E W  A C C O U N T
+                        // C H A N G E   A U T H    F O R M
                         if (!_isLoading)
                           TextButton(
                             onPressed: () {
                               setState(() {
-                                isLogin = !isLogin;
+                                _isLogin = !_isLogin;
                               });
                             },
-                            child: Text(isLogin
+                            child: Text(_isLogin
                                 ? 'Create new account'
                                 : 'Login instead'),
                           ),

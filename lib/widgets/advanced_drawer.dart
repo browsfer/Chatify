@@ -59,7 +59,7 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
             }
 
             if (userSnapshots.hasError) {
-              return Center(
+              return const Center(
                 // Better error handling later
                 child: Text('Something went wrong!:('),
               );
@@ -109,7 +109,8 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                     ListTile(
                       onTap: () => Navigator.pushReplacement(
                         context,
-                        MaterialPageRoute(builder: (context) => ChatScreen()),
+                        MaterialPageRoute(
+                            builder: (context) => const ChatScreen()),
                       ),
                       leading: const Icon(Icons.home),
                       title: const Text('Home'),
@@ -118,7 +119,7 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                       onTap: () => Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => UserSettingsScreen(),
+                          builder: (context) => const UserSettingsScreen(),
                         ),
                       ),
                       leading: const Icon(Icons.settings),

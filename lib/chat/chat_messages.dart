@@ -5,7 +5,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class ChatMessages extends StatefulWidget {
-  ChatMessages({super.key});
+  const ChatMessages({super.key});
 
   @override
   State<ChatMessages> createState() => _ChatMessagesState();

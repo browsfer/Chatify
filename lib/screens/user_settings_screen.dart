@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:motion_toast/motion_toast.dart';
 
 class UserSettingsScreen extends StatefulWidget {
-  UserSettingsScreen({super.key});
+  const UserSettingsScreen({super.key});
 
   @override
   State<UserSettingsScreen> createState() => _UserSettingsScreenState();
