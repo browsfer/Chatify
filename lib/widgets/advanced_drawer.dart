@@ -1,6 +1,8 @@
 import 'package:chatify/screens/user_settings_screen.dart';
+import 'package:chatify/widgets/get_usernames.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_advanced_drawer/flutter_advanced_drawer.dart';
 
@@ -19,6 +21,17 @@ class MyAdvancedDrawer extends StatefulWidget {
 
 class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
   final user = FirebaseAuth.instance.currentUser;
+
+  List<String> docIDs = [];
+
+  Future getUsers() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .get()
+        .then((snapshot) => snapshot.docs.forEach((element) {
+              docIDs.add(element.reference.id);
+            }));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -125,7 +138,28 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                       leading: const Icon(Icons.settings),
                       title: const Text('Settings'),
                     ),
+
+                    // L O G G E D  U S E R S
+                    //have to finish this one
+                    FutureBuilder(
+                      future: getUsers(),
+                      builder: (context, snapshot) {
+                        return Expanded(
+                          child: ListView.builder(
+                            itemCount: docIDs.length,
+                            itemBuilder: (context, index) => ListTile(
+                              title: GetUsernames(documentId: docIDs[index]),
+                            ),
+                          ),
+                        );
+                      },
+                    ),
                     const Spacer(),
+                    ListTile(
+                      onTap: () => FirebaseAuth.instance.signOut(),
+                      leading: const Icon(Icons.logout),
+                      title: const Text('Logout'),
+                    ),
                     DefaultTextStyle(
                       style: const TextStyle(
                         fontSize: 12,

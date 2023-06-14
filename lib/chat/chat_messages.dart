@@ -42,7 +42,7 @@ class _ChatMessagesState extends State<ChatMessages> {
           if (chatSnapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
-          final loadedMessages = chatSnapshot.data!.docs;
+          final loadedMessages = chatSnapshot.data?.docs;
           return ListView.builder(
             padding: const EdgeInsets.only(
               bottom: 40,
@@ -50,7 +50,7 @@ class _ChatMessagesState extends State<ChatMessages> {
               right: 13,
             ),
             reverse: true,
-            itemCount: loadedMessages.length,
+            itemCount: loadedMessages!.length,
             itemBuilder: (ctx, index) {
               final chatMessage = loadedMessages[index].data();
               final nextMessage = index + 1 < loadedMessages.length
