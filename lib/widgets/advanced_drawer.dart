@@ -27,15 +27,13 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
     await FirebaseFirestore.instance
         .collection('users')
         .get()
-        .then((snapshot) => snapshot.docs.forEach((element) {
-              docIDs.insert(0, element.reference.id);
+        .then((snapshot) => snapshot.docs.forEach((document) {
+              docIDs
+                      .where((element) => element == document.reference.id)
+                      .isEmpty
+                  ? docIDs.add(document.reference.id)
+                  : null;
             }));
-  }
-
-  @override
-  void initState() {
-    getUsers();
-    super.initState();
   }
 
   @override
@@ -155,14 +153,26 @@ class _MyAdvancedDrawerState extends State<MyAdvancedDrawer> {
                             leading: Icon(Icons.people),
                             title: Text('Current users:'),
                           ),
-                          Container(
-                            height: 170,
-                            child: ListView.builder(
-                              itemCount: docIDs.length,
-                              itemBuilder: (context, index) => ListTile(
-                                title: GetUsernames(documentId: docIDs[index]),
-                              ),
-                            ),
+                          FutureBuilder(
+                            future: getUsers(),
+                            builder: (context, snapshot) {
+                              if (snapshot.connectionState ==
+                                  ConnectionState.waiting) {
+                                return const Center(
+                                  child: LoadingWidget(),
+                                );
+                              }
+                              return SizedBox(
+                                height: 170,
+                                child: ListView.builder(
+                                  itemCount: docIDs.length,
+                                  itemBuilder: (context, index) => ListTile(
+                                    title:
+                                        GetUsernames(documentId: docIDs[index]),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
